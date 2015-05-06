@@ -10,6 +10,11 @@
  */
 function ask_vopros_settings($form, &$form_state) {
   // If ting is configured with an agency id, just use that.
+  /**
+   * @TODO: I don't think we should force a agency id (special in tests it might
+   *        make sens to fill it), but just set ting_agency with "DK-" as default
+   *        value.
+   */
   $agency_id = variable_get('ting_agency', '');
   if (empty($agency_id)) {
     $form['ask_vopros_agency_id'] = array(
@@ -69,6 +74,10 @@ function ask_vopros_settings($form, &$form_state) {
     '#description' => $description,
   );
 
+  /**
+   * @TODO: Create this "default" value in the top and use it both places (See
+   *        comment at top).
+   */
   if ($agency_id = variable_get('ting_agency', '')) {
     $agency_id = 'DK-' . $agency_id;
   }
