@@ -63,6 +63,9 @@ function ask_vopros_preprocess_html(&$vars) {
     );
 
     foreach ($mapping as $name => $field_suffix) {
+      /**
+       * @TODO: Maybe use an entity_metadata_wrapper here?
+       */
       $field_name = 'field_' . $module . '_' . $field_suffix;
 
       $field_value = field_get_items('profile2', $profile, $field_name);
