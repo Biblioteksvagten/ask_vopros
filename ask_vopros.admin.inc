@@ -30,10 +30,60 @@ function ask_vopros_settings($form, &$form_state) {
 
   $form['ask_vopros_uri'] = array(
     '#type' => 'textfield',
+    '#title' => t('Biblioteksvagten URL'),
+    '#default_value' => variable_get('ask_vopros_uri', 'https://adm.biblioteksvagten.dk'),
+    '#description' => t('The address of the Biblioteksvagten site to fall back to when local Vopros is closed.'),
+  );
+
+  $form['ask_vopros_secondary_uri'] = array(
+    '#type' => 'textfield',
     '#title' => t('Vopros URL'),
     '#default_value' => variable_get('ask_vopros_uri', 'https://adm.biblioteksvagten.dk'),
-    '#description' => t('The address of the Vopros site to send the question to.'),
+    '#description' => t('The address of the your own Vopros site to send questions to.'),
   );
+
+  $form['ask_vopros_opening_hours'] = array(
+    '#title' => t('Opening hours'),
+    '#theme' => 'ask_vopros_opening_hours',
+    '#theme_wrappers' => array('form_element'),
+    '#description' => t('Opening and closing hours for each day of the week, in the format HH:MM. If both opening and closing hours is unset for a given day, the chat is closed on that day.'),
+    '#tree' => TRUE,
+  );
+
+  $form['ask_vopros_opening_hours']['open'] = array(
+    '#theme_wrappers' => array('form_element'),
+    '#title' => t('Opens'),
+  );
+
+  $form['ask_vopros_opening_hours']['close'] = array(
+    '#theme_wrappers' => array('form_element'),
+    '#title' => t('Closes'),
+  );
+
+  $days = array(
+    t('Monday'),
+    t('Tuesday'),
+    t('Wednesday'),
+    t('Thursday'),
+    t('Friday'),
+    t('Saturday'),
+    t('Sunday'),
+  );
+
+  $hours = variable_get('ask_vopros_opening_hours', array());
+  foreach ($days as $day_num => $name) {
+    foreach (array('open', 'close') as $state) {
+      $default_value = isset($hours[$state][$day_num]) ?
+                     $hours[$state][$day_num] : '';
+      $form['ask_vopros_opening_hours'][$state][$day_num] = array(
+        '#type' => 'textfield',
+        '#title' => $name,
+        '#default_value' => $default_value,
+        '#size' => 5,
+        '#maxlength' => 5,
+      );
+    }
+  }
 
   $form['ask_vopros_agency_mail'] = array(
     '#type' => 'textfield',
@@ -118,4 +168,43 @@ function ask_vopros_settings_validate($form, &$form_state) {
   if (!preg_match('/^(|0|-?\d+(%|px|em|rem))$/', trim($form_state['values']['ask_vopros_right']))) {
     form_error($form['ask_vopros_right'], t('Invalid length'));
   }
+
+  // Validate opening hours.
+  for ($day = 0; $day < 7; $day++) {
+    foreach (array('open', 'close') as $state) {
+      $value = $form_state['values']['ask_vopros_opening_hours'][$state][$day];
+      if (empty($value)) {
+        $value = NULL;
+      }
+      elseif (!preg_match('/^(\d{1,2}):(\d{2})$/', $value, $rx) ||
+              $rx[1] > 23 || $rx[2] > 59) {
+        form_error($form['ask_vopros_opening_hours'][$state][$day], t('Invalid time.'));
+      }
+    }
+  }
+}
+
+/**
+ * Renders the opening hours into a table.
+ */
+function theme_ask_vopros_opening_hours($variables) {
+  $rows = array();
+  foreach (element_children($variables['elements']) as $state) {
+    $row = array();
+    $header = array('');
+    foreach (element_children($variables['elements'][$state]) as $key) {
+      // Copy the label to the header. This avoids having to duplicate the
+      // days.
+      $header[] = $variables['elements'][$state][$key]['#title'];
+      $variables['elements'][$state][$key]['#title_display'] = 'invisible';
+      $row[] = drupal_render($variables['elements'][$state][$key]);
+    }
+
+    // Prepend the row header, now that the #children of the element has been
+    // printed.
+    array_unshift($row, drupal_render($variables['elements'][$state]));
+    $rows[] = $row;
+  }
+
+  return theme('table', array('header' => $header, 'rows' => $rows));
 }
