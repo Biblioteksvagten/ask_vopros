@@ -120,14 +120,30 @@ function ask_vopros_preprocess_html(&$vars) {
       array('data' => $widget_settings_js, 'type' => 'inline'),
       drupal_get_path('module', 'ask_vopros') . '/js/ask_vopros.js',
     ),
+    'css' => array(),
   );
 
   $right = variable_get('ask_vopros_right', '');
-    $attachments['css'] = array(
-      array(
-        'data' => 'body .ask-vopros-tab {right: ' . $right . '}',
-        'type' => 'inline',
-      ),
+  if (!empty($right) || $right === '0') {
+    $attachments['css'][] = array(
+      'data' => 'body .ask-vopros-tab {right: ' . $right . '}',
+      'type' => 'inline',
+    );
+  }
+
+  $color = variable_get('ask_vopros_color', '');
+  if (!empty($color)) {
+    $css = <<<EOF
+body.html .ask-vopros-tab,
+body.html .ask-vopros-tab .ask-vopros-icon,
+body.html .ask-vopros-tab .ask-vopros-text,
+body.html .ask-vopros-tab .ask-vopros-minimize {
+  background-color: $color;
+}
+EOF;
+    $attachments['css'][] = array(
+      'data' => $css,
+      'type' => 'inline',
     );
   }
 
@@ -165,10 +181,9 @@ function ask_vopros_preprocess_html(&$vars) {
       $attachments = NULL;
     }
     // Hide tabs per default.
-    $element['#attached']['css'] = array(
-      array(
-        'data' => 'body .ask-vopros-tab.' . $class . ' {display: none}',
-        'type' => 'inline'),
+    $element['#attached']['css'][] = array(
+      'data' => 'body .ask-vopros-tab.' . $class . ' {display: none}',
+      'type' => 'inline',
     );
 
     $vars['page']['page_bottom'][] = $element;

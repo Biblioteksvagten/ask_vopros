@@ -92,6 +92,23 @@ function ask_vopros_settings($form, &$form_state) {
     '#description' => t('E-mail address which Biblioteksvagten can forward inquiries best answered locally to.'),
   );
 
+  $form['ask_vopros_color'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Override tab color'),
+    '#default_value' => variable_get('ask_vopros_color', ''),
+    '#description' => t('Override the tab color. Hex format color in the format #FFFFFF or #CCC. Leave empty for default.'),
+    '#size' => 8,
+    '#attached' => array(
+      // Add Farbtastic color picker.
+      'library' => array(
+        array('system', 'farbtastic'),
+      ),
+      'js' => array(
+        drupal_get_path('module', 'ask_vopros') . '/js/ask_vopros.admin.js',
+      ),
+    ),
+  );
+
   $form['ask_vopros_right'] = array(
     '#type' => 'textfield',
     '#title' => t('Override right margin'),
@@ -180,6 +197,13 @@ function ask_vopros_settings_validate($form, &$form_state) {
               $rx[1] > 23 || $rx[2] > 59) {
         form_error($form['ask_vopros_opening_hours'][$state][$day], t('Invalid time.'));
       }
+    }
+  }
+
+  if (!empty($form_state['values']['ask_vopros_color'])) {
+    if (!preg_match('/^#([a-f0-9]{3}){1,2}$/iD',
+                    $form_state['values']['ask_vopros_color'])) {
+      form_error($form['ask_vopros_color'], t('Invalid color.'));
     }
   }
 }
