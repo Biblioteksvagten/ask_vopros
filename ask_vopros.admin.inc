@@ -173,13 +173,26 @@ function ask_vopros_settings($form, &$form_state) {
  * Validation handler for settings form.
  */
 function ask_vopros_settings_validate($form, &$form_state) {
-  $url = $form_state['values']['ask_vopros_uri'];
-  $parsed = parse_url($url);
-  if (!$parsed || empty($parsed['host']) || empty($parsed['scheme'])) {
-    form_error($form['ask_vopros_uri'], t('Invalid URL.'));
+  if (!empty($form_state['values']['ask_vopros_uri'])) {
+    $url = $form_state['values']['ask_vopros_uri'];
+    $parsed = parse_url($url);
+    if (!$parsed || empty($parsed['host']) || empty($parsed['scheme'])) {
+      form_error($form['ask_vopros_uri'], t('Invalid URL.'));
+    }
+    if ($parsed['scheme'] != 'https') {
+      form_error($form['ask_vopros_uri'], t('Service URL must be a HTTPS URL in order to protect the privacy of the users'));
+    }
   }
-  if ($parsed['scheme'] != 'https') {
-    form_error($form['ask_vopros_uri'], t('Service URL must be a HTTPS URL in order to protect the privacy of the users'));
+
+  if (!empty($form_state['values']['ask_vopros_secondary_uri'])) {
+    $url = $form_state['values']['ask_vopros_secondary_uri'];
+    $parsed = parse_url($url);
+    if (!$parsed || empty($parsed['host']) || empty($parsed['scheme'])) {
+      form_error($form['ask_vopros_secondary_uri'], t('Invalid URL.'));
+    }
+    if ($parsed['scheme'] != 'https') {
+      form_error($form['ask_vopros_secondary_uri'], t('Service URL must be a HTTPS URL in order to protect the privacy of the users'));
+    }
   }
 
   if (!preg_match('/^(|0|-?\d+(%|px|em|rem))$/', trim($form_state['values']['ask_vopros_right']))) {
