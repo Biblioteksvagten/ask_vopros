@@ -81,6 +81,11 @@ function ask_vopros_settings($form, &$form_state) {
         '#default_value' => $default_value,
         '#size' => 5,
         '#maxlength' => 5,
+        '#states' => array(
+          'disabled' => array(
+            'input[name=ask_vopros_secondary_uri]' => array('value' => ''),
+          ),
+        ),
       );
     }
   }
