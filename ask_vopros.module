@@ -147,14 +147,17 @@ EOF;
     );
   }
 
-  $base = rtrim(variable_get('ask_vopros_uri', 'http://adm.biblioteksvagten.dk'), '/') . '/embed/';
-
   $tabs = array(
-    'external' => 'http://bv.dev/embed/',
-    'local' => $base,
+    'external' => variable_get('ask_vopros_uri', 'http://adm.biblioteksvagten.dk'),
+    'local' => variable_get('ask_vopros_secondary_uri', ''),
   );
 
   foreach ($tabs as $class => $base) {
+    if (empty($base)) {
+      continue;
+    }
+    $base = rtrim($base, '/') . '/embed/';
+
     // We can't set the async attribute for an attached JS, so we build the
     // script element by hand, in the same way drupal_get_js() does. Using
     // async and defer is the currently recommend practice to avoid having the

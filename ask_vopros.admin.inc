@@ -38,7 +38,7 @@ function ask_vopros_settings($form, &$form_state) {
   $form['ask_vopros_secondary_uri'] = array(
     '#type' => 'textfield',
     '#title' => t('Vopros URL'),
-    '#default_value' => variable_get('ask_vopros_uri', 'https://adm.biblioteksvagten.dk'),
+    '#default_value' => variable_get('ask_vopros_secondary_uri', 'https://adm.biblioteksvagten.dk'),
     '#description' => t('The address of the your own Vopros site to send questions to.'),
   );
 
