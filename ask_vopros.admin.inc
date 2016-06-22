@@ -218,9 +218,11 @@ function ask_vopros_settings_validate($form, &$form_state) {
     }
   }
 
-  if (!empty($form_state['values']['ask_vopros_color'])) {
-    if (!preg_match('/^#([a-f0-9]{3}){1,2}$/iD',
-                    $form_state['values']['ask_vopros_color'])) {
+  // Fabtastic doesn't update empty fields, so our JS adds an space. Strip it here.
+  $color = trim($form_state['values']['ask_vopros_color']);
+  form_set_value($form['ask_vopros_color'], $color, $form_state);
+  if (!empty($color)) {
+    if (!preg_match('/^#([a-f0-9]{3}){1,2}$/iD', $color)) {
       form_error($form['ask_vopros_color'], t('Invalid color.'));
     }
   }
