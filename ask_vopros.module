@@ -102,9 +102,8 @@ function ask_vopros_preprocess_html(&$vars) {
     if ($path != $_GET['q']) {
       $page_match = $page_match || drupal_match_path($_GET['q'], $visibility_pages);
     }
-    if ($page_match xor ($visibility_type == 'on')) {
-      $visible = FALSE;
-    }
+
+    $visible = ($visible xor $page_match);
   }
 
   $settings = array();
