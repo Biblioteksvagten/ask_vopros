@@ -43,10 +43,10 @@ function ask_vopros_settings($form, &$form_state) {
   );
 
   $form['ask_vopros_opening_hours'] = array(
-    '#title' => t('Opening hours'),
+    '#title' => t('Opening hours for local service'),
     '#theme' => 'ask_vopros_opening_hours',
     '#theme_wrappers' => array('form_element'),
-    '#description' => t('Opening and closing hours for each day of the week, in the format HH:MM. If both opening and closing hours is unset for a given day, the chat is closed on that day.'),
+    '#description' => t('Local service opening and closing hours for each day of the week, in the format HH:MM. If both opening and closing hours is unset for a given day, the chat is closed on that day.'),
     '#tree' => TRUE,
   );
 
