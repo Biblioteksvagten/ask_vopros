@@ -4,7 +4,7 @@
  */
 
 (function ($) {
-  Drupal.behaviors.askVoprosTabs = {
+  Drupal.behaviors.askVoprosAdmin = {
     attach: function (context, settings) {
       $('#ask-vopros-settings .form-item-ask-vopros-color').once('ask-vopros-admin-color', function () {
         var input = $('input', this)
