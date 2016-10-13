@@ -9,8 +9,13 @@
   Drupal.askVopros.activate = function(className) {
     $('.ask-vopros-tab:not(.' + className + ')').fadeOut(400);
     if (className) {
-      $('.' + className).fadeIn();
+      var active_tab = $('.ask-vopros-tab.' + className);
+      if (active_tab.length) {
+        active_tab.fadeIn();
+        return true;
+      }
     }
+    return false;
   };
 
   Drupal.askVopros.updateTabs = function() {
@@ -30,7 +35,6 @@
       state = 'local';
     }
 
-    Drupal.askVopros.activate(state);
     var nextUpdate = null;
     if (hours['open'] && time <= hours['open']) {
       nextUpdate = hours['open'] - time;
@@ -38,6 +42,12 @@
     else if (hours['close'] && time <= hours['close']) {
       nextUpdate = hours['close'] - time;
     }
+
+    // If tabs isn't shown yet, schedule a quick update.
+    if (!Drupal.askVopros.activate(state)) {
+      nextUpdate = 500;
+    }
+
     if (nextUpdate) {
       setTimeout(Drupal.askVopros.updateTabs, nextUpdate);
     }
@@ -45,8 +55,7 @@
 
   Drupal.behaviors.askVoprosTabs = {
     attach: function (context, settings) {
-      // Initial timeout is to wait for external JS to insert the tabs.
-      setTimeout(Drupal.askVopros.updateTabs, 500);
+      Drupal.askVopros.updateTabs();
     }
   }
 })(jQuery);
