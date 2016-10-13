@@ -6,7 +6,7 @@
 (function ($) {
   Drupal.askVopros = {};
 
-  Drupal.askVopros.activate = function(className = null) {
+  Drupal.askVopros.activate = function(className) {
     $('.ask-vopros-tab:not(.' + className + ')').fadeOut(400);
     if (className) {
       $('.' + className).fadeIn();
