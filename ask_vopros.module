@@ -123,12 +123,6 @@ function ask_vopros_preprocess_html(&$vars) {
   );
 
   $right = variable_get('ask_vopros_right', '');
-  if (!empty($right) || $right === '0') {
-    $attachments['css'][] = array(
-      'data' => 'body .ask-vopros-tab {right: ' . $right . '}',
-      'type' => 'inline',
-    );
-  }
 
   $color = variable_get('ask_vopros_color', '');
   if (!empty($color)) {
@@ -176,6 +170,15 @@ EOF;
     $element = array(
       '#markup' => theme('html_tag', array('element' => $element)),
     );
+
+    // Need to add the margin for each class, as we can't fix it with
+    // specificity.
+    if (!empty($right) || $right === '0') {
+      $attachments['css'][] = array(
+        'data' => 'body .ask-vopros-tab.' . $class . ' {right: ' . $right . '}',
+        'type' => 'inline',
+      );
+    }
 
     // Only attach once.
     if ($attachments) {
